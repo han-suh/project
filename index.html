@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css">
+    <!-- ./  ==  " "  ==  . -->
+    <title>프로젝트</title>
+    <script defer src="./ap.js"></script>
+
+</head>
+<body>
+    <h1>프로젝트</h1>
+        <div id="userInfo" class="user-info">
+            <h4 id="userList"></h4>
+        </div>
+        <div id="container">
+            <ul id="userInf">
+                <p class="user_id"></p>
+                <p class="name"></p>
+                <p class="age"></p>
+                <p class="married"></p>
+                <p class="address"></p>
+                <p class="phone"></p>
+                <p class="email"></p>
+            </ul>
+        </div>
+    <h2>상품 목록</h2>
+        <ul id="productList">
+            <li id="productEx">
+                <div>
+                    <img class="img" src="" alt="">
+                </div>
+                <form name="a" action="#" class="basketForm">
+                    <h4 class="title"></h4>
+                    <p><span class="price"></span>원</p>
+                    <p>
+                        <label>수량 : 
+                            <input name="cnt" type="number" min="1" max="10" value="1">
+                        </label>
+                    </p>
+                    <p>
+                        <input type="hidden" name="num" value="">
+                        <input type="hidden" name="title" value="">
+                        <input type="hidden" name="price" value="">
+                        <button type="submit">장바구니</button>
+                        <button type="button">바로구매</button>
+                    </p>
+                </form>
+            </li>
+        </ul>
+        <div>
+            <h4 >장바구니 목록</h4>
+            <table id="userBasTable">
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>이름</th>
+                        <th>가격</th>
+                        <th>수량</th>
+                        <th>총가격</th>
+                        <th>삭제</th>
+                    </tr>
+                </thead>
+                <tbody id="userBasketCont">
+                    <tr class="userBasketEx">
+                        <th class="num"></th>
+                        <td class="title"></td>
+                        <td class="price"></td>
+                        <td class="cnt"></td>
+                        <td class="total"></td>
+                        <th class="deleteColumn"></th>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6">전체가격 : 
+                            <b id="totalPrice">0</b>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+<script>
+    
+</script>
+    
+</body>
+</html>

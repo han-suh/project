@@ -1,0 +1,189 @@
+#productEx{
+    display: none !important;
+}
+#userBasTable th:empty {
+    display: none;
+}
+#userBasketCont .userBasketEx th:empty,
+#userBasketCont .userBasketEx td:empty {
+    display: none;
+}
+
+
+body {
+    background-color: #f5f5f5;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-top: 20px;
+}
+
+#container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+#userList {
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border-radius: 10px;
+    margin: 0;
+    font-weight: bold;
+}
+
+#userList .user_id {
+    font-size: 1.1rem;
+}
+
+#userList .name,
+#userList .age,
+#userList .married,
+#userList .address,
+#userList .phone,
+#userList .email {
+    font-size: 1rem;
+}
+
+.user-info {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8); 
+    padding: 10px;
+    border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-size: 14px;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#userList p{
+    margin: 0;
+    font-size: 12px;
+}
+
+#productList {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+#productList li {
+    width: 300px;
+    padding: 20px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    background-color: white;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+}
+
+#productList li:hover {
+    transform: scale(1.05);
+}
+
+#productList li img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: opacity 0.3s;
+}
+
+#productList li:hover img {
+    opacity: 0.8;
+}
+
+.basketForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.basketForm button {
+    padding: 12px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.basketForm button:hover {
+    background-color: #2980b9;
+}
+
+.basketForm input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#userBasTable {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+#userBasTable th, #userBasTable td {
+    padding: 12px;
+    text-align: center;
+    font-size: 1rem;
+    border-bottom: 1px solid #ddd;
+}
+
+#userBasTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: #333;
+}
+
+.deleteBtn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.deleteBtn:hover {
+    background-color: #c0392b;
+}
+
+#totalPrice {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3498db;
+}
+
+tfoot td {
+    text-align: right;
+    padding: 20px;
+    font-size: 1.2rem;
+    background-color: #f9f9f9;
+}
