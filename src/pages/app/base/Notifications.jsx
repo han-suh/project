@@ -10,7 +10,7 @@ import { useAuth } from "/src/lib/auth-context";
 // Notification type definition
 const NotificationsPage = () => {
   //const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const [loginUser, setLoginUser] = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
   const navigate = useNavigate();
