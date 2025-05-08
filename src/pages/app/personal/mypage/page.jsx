@@ -185,7 +185,7 @@ const Mypage = () => {
 
     return (
          userStats && (
-    <div id="mypage-body" className="dark">
+    <div id="mypage-body">
         {/* Header */}
         <header>
             <ul>
@@ -221,15 +221,15 @@ const Mypage = () => {
                     <div id="profile-number-container">
                         <ul>
                             <li>
-                                <div className="profile-number"><span>{userStats.countPosts}</span><a
-                                    href="">게시물</a></div>
-                            </li>
-                            <li>
-                                <div className="profile-number"><span>{userStats.followers}</span><Link
-                                    to="/follower">팔로워</Link></div>
+                                <div className="profile-number"><span>{userStats.countPosts}</span><Link
+                                    to="/mypage" state={{ selectedTab: "postings" }}>게시물</Link></div>
                             </li>
                             <li>
                                 <div className="profile-number"><span>{userStats.followees}</span><Link
+                                    to="/follower">팔로워</Link></div>
+                            </li>
+                            <li>
+                                <div className="profile-number"><span>{userStats.followers}</span><Link
                                     to="/followee">팔로잉</Link></div>
                             </li>
                         </ul>

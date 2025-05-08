@@ -1,7 +1,50 @@
 const serverUrl        = "http://localhost:4775";
+// const serverUrl        = "";
 const LOGIN_URL        = `${serverUrl}/user/jwt/login.do`;
 const CHECK_LOGIN_URL = `${serverUrl}/user/jwt/check.do`;
 const OAUTH_URL = `${serverUrl}/user/oauth/login.do`;
+
+export async function loadUnfollow(followerId,followeeId){
+   const url=`${serverUrl}/api/posting/${followerId}/followee.do`;
+   const resp =await fetchAuth(url, {
+      method: "DELETE",
+      headers: {
+         "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+         followeeId: followeeId,
+         followerId: followerId
+      })
+   });
+   return resp;
+}
+export async function loadFollowers(userId){
+   const url=`${serverUrl}/api/posting/${userId}/follower.do`;
+   const resp=await fetchAuth(url);
+   const data=await resp.json();
+   return data;
+}
+export async function loadSaveFollow({followerId,followeeId}){
+   const url=`${serverUrl}/api/posting/${followeeId}/followee.do`;
+   const resp =await fetchAuth(url, {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+         "followeeId": followerId,
+         "followerId": followeeId
+      })
+   });
+   return resp;
+}
+export async function loadFollowee(userId){
+   const url=`${serverUrl}/api/posting/${userId}/followee.do`;
+   const resp=await fetchAuth(url);
+   const data=await resp.json();
+   return data;
+
+}
 
 // const LOGIN_URL        = `${serverUrl}/user/jwt/login.do`;
 // permitAll에서 로그인을 시도하는 것.
@@ -49,6 +92,8 @@ export async function fetchAuth(url, option = {}) { // option = {} 는 디폴트
          // headers 안에 Authorization 헤더를 강제로 추가하면서도, 사용자가 직접 넘긴 headers도 덮어쓰지 않고 보존
          // 이 구조 덕분에 사용자가 Content-Type, Accept 같은 걸 별도로 지정해도 덮어쓰기 안 됨
       },
+      credentials: "include",
+
    });// 이 headers는 fetch() 함수가 보낼 HTTP 요청(Request)의 헤더입니다.
 
    if (!response.ok) {

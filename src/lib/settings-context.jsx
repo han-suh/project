@@ -22,7 +22,9 @@ export function SettingsProvider({ children }) {
     const [loginUser,]=useAuth();
     const [userData, setUserData] = useState(null);
     // 로컬 스토리지에서 설정 불러오기
+    console.log("settings")
     useEffect(() => {
+        console.log(loginUser)
         if(!loginUser) {return}
         loadUserSettings(loginUser.userId)
             .then((data) => {
@@ -36,7 +38,15 @@ export function SettingsProvider({ children }) {
                     displayColor: data.displayColor,
                     language: data.language,
                     setAt: data.setAt,
-                })
+                });
+                if (typeof window !== "undefined") {
+                    if (userData.displayColor==="Dark") {
+                        document.documentElement.classList.add("dark")
+                    } else {
+                        document.documentElement.classList.remove("dark")
+                    }
+                }
+
             })
             .catch((err) => {
                 console.error("사용자 정보 불러오기 실패", err)
@@ -55,11 +65,12 @@ export function SettingsProvider({ children }) {
                 setFontSize(settings.fontSize || "medium")
             }
         }
-    }, [])
+    }, [loginUser])
 
     // 다크 모드 설정 적용
     useEffect(() => {
         if(!userData) return
+        console.log(userData)
         if (typeof window !== "undefined") {
             if (userData.displayColor==="Dark") {
                 document.documentElement.classList.add("dark")

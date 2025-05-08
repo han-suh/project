@@ -6,6 +6,7 @@ import {useAuth} from "/src/lib/auth-context";
 import './followerRefined.css';
 import './followerStyle.css';
 import {Button} from "../../../../../components/ui/button.jsx";
+import {loadFollowee, loadFollowers, loadSaveFollow} from "../../../../../utils/UserFetch.js";
 
 
 const FollowerPage = () => {
@@ -41,15 +42,8 @@ const FollowerPage = () => {
     // }, []);
     useEffect(() => {
         // const userId="user1001";
-        fetch(`/api/posting/${loginUser.userId}/followee.do`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            credentials: "include"
-        })
-            .then((res) => res.json())
+        if(!loginUser)return;
+       loadFollowee(loginUser.userId)
             .then((data) => {
                 // const list = data.findByFolloweeId.map(item => item.followers);
                 // console.log("데이터:", data);
@@ -66,26 +60,15 @@ const FollowerPage = () => {
             .catch((err) => console.error("불러오기 실패",err));
     }, []);
 
-    const handleFollow = (userId) => {
-        console.log(loginUser)
-        console.log(loginUser.userId)
+    const handleFollow =async (userId) => {
+        if(!loginUser)return;
         const followeeId=loginUser.userId;
-        const followerId = userId;
+        const followerId=userId;
         try{
-            const response = fetch(`/api/posting/${followeeId}/followee.do`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                    },
-                body: JSON.stringify({
-                    followeeId: followeeId,
-                    followerId: followerId
-                })
-            });
+            const response=await loadSaveFollow({"followerId":followerId, "followeeId":followeeId});
 
             if (response.ok){
+                alert("팔로우 성공");
                 setFolloweeUser((prev) => prev.map((user) => user.userId === userId ? {...user, isUsed: true } : user));
             }else {
                 alert("팔로우 실패")

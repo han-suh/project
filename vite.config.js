@@ -5,12 +5,16 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: {
-      '/api': {
-        target: 'http://localhost:4775', // 백엔드 포트
-        changeOrigin: true,
-        secure: false
-      }
-    }
+    // proxy: {
+    //   '/api': {
+    //     target: 'http://localhost:4775', // 백엔드 포트
+    //     changeOrigin: true,
+    //     secure: false
+    //   }
+    // }
+  },
+  build:{
+    emptyOutDir:true,
+    outDir: 'C:\\Users\\tjoeun\\project\\src\\main\\resources\\static',
   }
 })

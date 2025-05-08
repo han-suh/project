@@ -6,6 +6,7 @@ import {useAuth} from "/src/lib/auth-context";
 
 import './followeeRefined.css';
 import './followeeStyle.css';
+import {loadFollowee, loadFollowers, loadUnfollow} from "../../../../../utils/UserFetch.js";
 
 
 const FolloweePage = () => {
@@ -60,15 +61,8 @@ const FolloweePage = () => {
     // }, []);
     useEffect(() => {
         // const userId="user1001";
-        fetch(`/api/posting/${loginUser.userId}/follower.do`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            credentials: "include"
-        })
-            .then((res) => res.json())
+        if(!loginUser)return;
+       loadFollowers(loginUser.userId)
             .then((data) => {
                 // const list = data.findByFolloweeId.map(item => item.followers);
                 // console.log("데이터:", data);
@@ -85,25 +79,30 @@ const FolloweePage = () => {
             .catch((err) => console.error("불러오기 실패",err));
     }, []);
 
-    const handleUnfollow = (userId) => {
+    const handleUnfollow = async (userId) => {
+        if(!loginUser) return;
         const followerId=loginUser.userId;
         const followeeId = userId;
         try{
-            const response = fetch(`/api/posting/${followerId}/followee.do`, {
-                method: "DELETE",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    followeeId: followeeId,
-                    followerId: followerId
-                })
-            });
+            const response =await loadUnfollow(followerId, followeeId);
 
             if (response.ok) {
-                setFollowerUser((prev) => prev.map((user) => user.userId === userId ? {...user, isUsed: false } : user));
+                alert("언팔로우 성공");
+                loadFollowers(loginUser.userId)
+                    .then((data) => {
+                        // const list = data.findByFolloweeId.map(item => item.followers);
+                        // console.log("데이터:", data);
+                        // console.log("팔로이 리스트:", list);
+                        const initialized = data.findByFollowerId.map(item => ({...item.followees, isUsed: true}));
+                        setFollowedUser(initialized);
+                        console.log("데이터: ", data);
+                        // console.log("확인: ", initialized);
+                        // console.log("set??", setFollowedUser);
+                        // console.log("그냥 followedUser??", followedUser);
+                        // setFollowersList(list);
+                        setUserName(data.user.userName);
+                    })
+                    .catch((err) => console.error("불러오기 실패",err));
             }else {
                 alert("언팔로우 실패")
             }

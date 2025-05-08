@@ -4,7 +4,7 @@
 import {fetchAuth} from "./UserFetch.js";
 
 const serverUrl = "http://localhost:4775";
-//const serverUrl = "";
+// const serverUrl = "";
 export async function loadUserSettings(userId){
    const url=`${serverUrl}/api/posting/${userId}/setting.do`;
    const resp=await fetchAuth(url);
@@ -14,7 +14,8 @@ export async function loadUserSettings(userId){
    return data;
 }
 export async function loadSaveSettings(userData){
-   const resp=await fetchAuth(`/api/posting/${userData.userId}/setting.do`, {
+   const url=`${serverUrl}/api/posting/${userData.userId}/setting.do`;
+   const resp=await fetchAuth(url, {
       method: "PUT",
       headers : {"Content-Type": "application/json"},
       body: JSON.stringify({

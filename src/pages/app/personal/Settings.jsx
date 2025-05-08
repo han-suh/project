@@ -96,8 +96,7 @@ export default function SettingsPage() {
     loadSaveSettings({...userData,language:i18n.changeLanguage(selectedLang)})
         .then((res) => {
           if (!res.ok) throw new Error("변경 실패");
-          setUserData((prevUserData)=>({...prevUserData, language: userData.language}));
-
+          setUserData((prevUserData)=>({...prevUserData, language: userData.selectedLang}));
         })
         .catch((err) => {
           console.error("언어 설정 실패", err);
