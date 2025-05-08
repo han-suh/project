@@ -11,16 +11,111 @@ import './reactive.css';
 
 import {renderWidgetContent} from "../../widget/widgetRenderer";
 async function loadPostOne(postId){
-    const url=`http://localhost:4775/api/posting/comment/postId.do?postId=${postId}`;
+    const url=`http://localhost:4775/api/posting/${postId}/read.do`;
+    const token=localStorage.getItem("jwt");
     ///comment/postId.do
-    fetch("",{
+    const resp=await fetch(url,{
         method: "GET",
         headers: {
             'Authorization': `Bearer ${token}`,
         },
         credentials: "include"
+    });
+    if(!resp.ok){throw new Error(resp.status+"")}
+    const data=await resp.json();
+    return data;
+}
+async function loadWidgetsByUserId(userId){
+    const url=`http://localhost:4775/api/widgets/used?userId=${userId}`;
+    const resp=await fetch(url, {
+        credentials: "include"
+    })
+    if(!resp.ok){throw new Error(resp.status+"")}
+    const data=await resp.json();
+    return data;
+}
+async function loadSaveWidgetsOrder(orderData){
+    const url=`http://localhost:4775/api/widgets/order`;
+    const resp=await fetch(url, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        credentials: "include",
+        body: JSON.stringify(orderData)
+    })
+    return resp;
+}
+async function loadRemoveWidget(widgetIdNum, userId){
+    const url=`http://localhost:4775/api/widgets/delete/${widgetIdNum}?userId=${userId}`;
+    const resp=await fetch(url, {
+        method: "DELETE",
+        credentials: "include"
+    })
+    return resp;
+}
+async function loadUser(userId){
+    const url=`http://localhost:4775/api/posting/${userId}/userpage.do`;
+    const token=localStorage.getItem("jwt");
+    const resp=await fetch(url, {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        credentials: "include"
+    })
+    if (!resp.ok) {
+        throw new Error(resp.status+"");
     }
-
+    const data=await resp.json();
+    console.log(data);
+    return data;
+}
+async function loadUserPosting(userId){
+    const url=`http://localhost:4775/api/posting/${userId}/postpage.do`;
+    const token=localStorage.getItem("jwt");
+    const resp=await fetch(url, {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        credentials: "include"
+    })
+    if (!resp.ok) {
+        throw new Error(resp.status+"");
+    }
+    const data=await resp.json();
+    console.log(data);
+    return data;
+}
+async function loadSavePostingComment(postId, userId, contents){
+    const url=`http://localhost:4775/api/posting/comments.do`;
+    const token=localStorage.getItem("jwt");
+    const resp=await fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`,
+        },
+        credentials: "include",
+        body: JSON.stringify({
+            postId : postId,
+            userId : userId, //currentUserId(로그인한 사용자의 Id는 useEffect로 받아올 것!)
+            contents : contents,
+        }),
+    });
+    return resp;
+}
+async function loadPosting(postId){
+    const url=`http://localhost:4775/api/posting/${postId}/read.do`;
+    const token=localStorage.getItem("jwt");
+    const resp=await fetch(url, {
+        method: "GET",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        credentials: "include"
+    });
+    const data=await resp.json();
+    return data;
 }
 const Mypage = () => {
     const [widgets, setWidgets] = useState([]);
@@ -48,20 +143,15 @@ const Mypage = () => {
     useEffect(() => {
 
         const userId = "user1001"; // 가정된 유저 ID
-        fetch(`/api/widgets/used?userId=${userId}`, {
-            credentials: "include"
-        })
-            .then(async (res) => res.json())
+        loadWidgetsByUserId(userId)
             .then((data) => {
                 console.log("서버로부터 받아온 위젯 데이터:", data);
-
                 const processedData = data.map(widget => ({
                     id: `widget${widget.widget_id}`,
                     type: widget.widget_json.type || "unknown",
                     label: widget.widget_json.label || "",
                     size: `${widget.widget_size}x1`
                 }));
-
                 setWidgets(processedData);
             })
             .catch((err) => {
@@ -111,12 +201,7 @@ const Mypage = () => {
             order: index
         }));
 
-        fetch("/api/widgets/order", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            credentials: "include",
-            body: JSON.stringify(orderData)
-        }).then(res => {
+        loadSaveWidgetsOrder(orderData).then(res => {
             if (!res.ok) alert("순서 저장 실패");
         });
     };
@@ -135,12 +220,8 @@ const Mypage = () => {
 
     const handleDeleteWidget = () => {
         const widgetIdNum = parseInt(contextMenu.widgetId.replace("widget", ""));
-        const userId = "user1001"; // 고정 유저 ID (혹은 로그인 유저로 추후 변경)
 
-        fetch(`/api/widgets/delete/${widgetIdNum}?userId=${userId}`, {
-            method: "DELETE",
-            credentials: "include"
-        })
+        loadRemoveWidget(widgetIdNum, loginUser.userId)
             .then(res => {
                 if (res.ok) {
                     setWidgets(prev => prev.filter(w => w.id !== contextMenu.widgetId));
@@ -164,19 +245,7 @@ const Mypage = () => {
 
     // userData
     useEffect(() => {
-    fetch(`/api/posting/${loginUser.userId}/userpage.do`, {
-        method: "GET",
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-        credentials: "include"
-    })
-        .then((res) => {
-            if (!res.ok) {
-                throw new Error(`서버 응답 실패: ${res.statusText}`);
-            }
-            return res.json();
-        })
+    loadUser(loginUser.userId)
         .then((data) => {
             // console.log("서버로부터 받아온 유저 데이터:", data);
             setUserStats({
@@ -193,14 +262,7 @@ const Mypage = () => {
     // postData
     useEffect(() =>{
         if(selectedTab === "postings"){
-            fetch(`/api/posting/${loginUser.userId}/postpage.do`, {
-                method: "GET",
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                credentials: "include"
-            })
-                .then((res) => res.json())
+            loadUserPosting(loginUser.userId)
                 .then(async (data) => {setPosts(data);
                     console.log("서버로부터 받아온 유저 데이터:", data);})
                 .catch((err) => console.error("게시물 불러오기 실패", err));
@@ -209,20 +271,14 @@ const Mypage = () => {
 
     // postingComment Input
     async function handleSubmitPostingComment() {
-        await fetch(`http://localhost:4775/api/posting/comments.do`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`,
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                postId : selectedPost.postId,
-                userId : loginUser.userId, //currentUserId(로그인한 사용자의 Id는 useEffect로 받아올 것!)
-                contents : newPostComment,
-            }),
-        });
-        setNewPostComment("");
+        const resp = await loadSavePostingComment(selectedPost.postId, loginUser.userId, newPostComment);
+        if (!resp.ok) {
+            alert("댓글 등록 실패");
+            return;
+        }
+        const data=await loadPosting(selectedPost.postId);
+        setSelectedPost(()=>data);
+        //setNewPostComment("");
     };
 
     return (
