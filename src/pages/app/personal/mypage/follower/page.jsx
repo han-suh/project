@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import { Link } from "react-router-dom";
 import {ArrowLeft, Settings} from "lucide-react"; // 뒤로가기
-// import { Button } from "../../../../../components/ui/button.jsx"
+import {useAuth} from "/src/lib/auth-context";
 
 import './followerRefined.css';
 import './followerStyle.css';
@@ -14,6 +14,8 @@ const FollowerPage = () => {
     const [isUsed, setIsUsed] = useState(true);
     const [followedUser, setFollowedUser] = useState([]);
     const [followeeUser, setFolloweeUser] = useState([]);
+    const [loginUser, setLoginUser] = useAuth();
+    const token = localStorage.getItem("jwt");
 
     // followerData
     // useEffect(() => {
@@ -38,8 +40,13 @@ const FollowerPage = () => {
     //         .catch((err) => console.error("불러오기 실패",err));
     // }, []);
     useEffect(() => {
-        const userId="user1001";
-        fetch(`/api/posting/${userId}/followee.do`, {
+        // const userId="user1001";
+        fetch(`/api/posting/${loginUser.userId}/followee.do`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
             credentials: "include"
         })
             .then((res) => res.json())
@@ -50,9 +57,9 @@ const FollowerPage = () => {
                 const initialized = data.findByFolloweeId.map(item => ({...item.followers, isUsed: true}));
                 setFollowedUser(initialized);
                 console.log("데이터: ", data);
-                console.log("확인: ", initialized);
-                console.log("set??", setFollowedUser);
-                console.log("그냥 followedUser??", followedUser);
+                // console.log("확인: ", initialized);
+                // console.log("set??", setFollowedUser);
+                // console.log("그냥 followedUser??", followedUser);
                 // setFollowersList(list);
                 setUserName(data.user.userName);
             })
@@ -60,13 +67,18 @@ const FollowerPage = () => {
     }, []);
 
     const handleFollow = (userId) => {
-        const followeeId="user1001";
+        console.log(loginUser)
+        console.log(loginUser.userId)
+        const followeeId=loginUser.userId;
         const followerId = userId;
         try{
             const response = fetch(`/api/posting/${followeeId}/followee.do`, {
                 method: "POST",
                 credentials: "include",
-                headers: {"Content-Type": "application/json",},
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                    },
                 body: JSON.stringify({
                     followeeId: followeeId,
                     followerId: followerId

@@ -8,39 +8,24 @@ import { useAuth } from "/src/lib/auth-context"
 import { useSettings } from "/src/lib/settings-context"
 import { languageNames } from "/src/lib/translations"
 import {error} from "next/dist/build/output/log.js";
+import {loadSaveSettings, loadUserSettings} from "../../../utils/eventFetch.js";
 
 export default function SettingsPage() {
   const navigate = useNavigate()
-  const { user, signOut } = useAuth()
+  const [loginUser, setLoginUser] = useAuth();
+  const token = localStorage.getItem("jwt");
   const fileInputRef = useRef(null)
   // const { i18n } = useTranslation();
   const {
-  //   // darkMode,
-  //   // toggleDarkMode,
-  //   language,
-  //   setLanguage,
-  //   notificationsEnabled,
-  //   toggleNotifications,
-  //   emailNotifications,
-  //   toggleEmailNotifications,
-  //   marketingNotifications,
-  //   toggleMarketingNotifications,
-    autoTranslate,
-    toggleAutoTranslate,
-    fontSize,
-    setFontSize,
+      fontSize,
+      setFontSize,
+      userData,
+      setUserData
   } = useSettings()
-  const [userData, setUserData] = useState({settingId: null, userId: "", userEmail: "", userName: "", displayColor: "Light", language: "", setAt: ""})
   const { t, i18n } = useTranslation();
 
   const [activeTab, setActiveTab] = useState("account")
   const [isEditing, setIsEditing] = useState(false)
-  // const [profileData, setProfileData] = useState({
-  //   name: "",
-  //   email: "",
-  //   bio: "",
-  //   phone: "",
-  // })
 
   // 비밀번호 변경 상태
   const [passwordData, setPasswordData] = useState({
@@ -56,12 +41,11 @@ export default function SettingsPage() {
 
   // 사용자 정보 로드
   useEffect(() => {
-    const userId = "user1001";
-    fetch(`/api/posting/${userId}/setting.do`, {
-      credentials: "include",
-    })
-        .then((res) => res.json())
+    // const userId = "user1001";
+    if(!loginUser) {return}
+    loadUserSettings(loginUser.userId)
         .then((data) => {
+          console.log(data);
           setUserData({
             settingId: data.settingId,
             userId: data.userId,
@@ -89,90 +73,42 @@ export default function SettingsPage() {
   // }, [user, navigate, t])
 
   // 다크모드 on/off
-  const toggleDarkMode = () => {
+  const toggleDarkMode = (e) => {
     const newDisplayColor = userData.displayColor === "Dark" ? "Light" : "Dark";
-    document.documentElement.classList.toggle('dark', newDisplayColor === "Dark");
-    setUserData({...userData, displayColor: newDisplayColor});
 
-    fetch(`/api/posting/${userData.userId}/setting.do`, {
-      method: "PUT",
-      headers : {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        settingId: userData.settingId,
-        user: {
-          userId: userData.userId,
-          userEmail: userData.userEmail,
-          userName: userData.userName,
-          // profileImageUrl: userData.profileImageUrl,
-        },
-        displayColor: newDisplayColor,
-        language: userData.language,
-        setAt: new Date().toISOString(),
-      }),
-    })
+    loadSaveSettings({...userData,displayColor:newDisplayColor})
         .then((res) => {
           if(!res.ok) throw new Error("변경 실패");
-          setUserData({...userData, displayColor: newDisplayColor});
+          setUserData((prevUserData)=>({...prevUserData, displayColor: newDisplayColor}));
+          document.documentElement.classList.toggle('dark', newDisplayColor === "Dark");
         })
         .catch((err) => {console.error("다크모드 저장 실패", err);
           alert("변경 실패")
-          setUserData({...userData, displayColor: userData.displayColor});
         });
   };
 
   // 언어
   const changeLanguage = (e) => {
     const selectedLang = e.target.value;
-    i18n.changeLanguage(selectedLang);
+
     // setUserData({...userData, language: newLanguage});
     // i18n.changeLanguage(newLanguage.toLowerCase());
-    fetch(`/api/posting/${userData.userId}/setting.do`, {
-      method: "PUT",
-      headers : {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        settingId: userData.settingId,
-        user: {
-          userId: userData.userId,
-          userEmail: userData.userEmail,
-          userName: userData.userName,
-          // profileImageUrl: userData.profileImageUrl,
-        }
-        ,
-        displayColor: userData.displayColor,
-        language: selectedLang,
-        setAt: new Date().toISOString(),
-      }),
-    })
+    loadSaveSettings({...userData,language:i18n.changeLanguage(selectedLang)})
         .then((res) => {
           if (!res.ok) throw new Error("변경 실패");
-          setUserData({...userData, language: selectedLang});
+          setUserData((prevUserData)=>({...prevUserData, language: userData.language}));
+
         })
         .catch((err) => {
           console.error("언어 설정 실패", err);
           alert("변경 실패")
-          setUserData({...userData, language: userData.language});
         });
   }
 
 
   // 프로필 저장
   const saveProfile = () => {
-    fetch(`/api/posting/${userData.userId}/setting.do`,{
-      method: "PUT",
-      headers : {"Content-Type": "application/json"},
-      body: JSON.stringify({
-        settingId: userData.settingId,
-        user: {
-          userId: userData.userId,
-          userEmail: userData.userEmail,
-          userName: userData.userName,
-          // profileImageUrl: userData.profileImageUrl,
-        },
-          displayColor: userData.displayColor,
-          language: userData.language,
-          setAt: new Date().toISOString(),
-      }),
-    })
+   loadSaveSettings({...userData})
         .then((res) => {
           if (!res.ok) throw new Error("프로필 저장 실패");
           alert(t("프로필 저장"));
@@ -212,7 +148,7 @@ export default function SettingsPage() {
     if (!file) return;
 
     const formData = new FormData();
-    formData.append("profileImage", profileImage);
+    formData.append("profileImage", file);
 
     fetch(`/api/posting/${userData.userId}/setting.do`, {
       method: "POST",
@@ -230,12 +166,12 @@ export default function SettingsPage() {
     fileInputRef.current?.click()
   }
 
-  if (!user) {
+  if (!userData) {
     return <div className="container mx-auto py-10">{t("loading")}</div>
   }
 
   return (
-      <div className={`container mx-auto py-8 px-4 ${userData.displayColor === "Dark" ? "dark" : ""}`}>
+      <div className={`container mx-auto py-8 px-4 ${data.displayColor === "Dark" ? "dark" : ""}`}>
       {/*<div className={`container mx-auto py-8 px-4 ${displayColor ? "Dark" : ""}`}>*/}
         <div className="max-w-4xl mx-auto">
           {/* 헤더 */}
@@ -332,7 +268,7 @@ export default function SettingsPage() {
 
                 <div className="mt-6 pt-6 border-t dark:border-gray-700">
                   <button
-                      onClick={signOut}
+                      onClick=""
                       className="w-full text-left px-4 py-2 rounded-md flex items-center text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
                     <LogOut className="h-5 w-5 mr-3" />
@@ -355,7 +291,7 @@ export default function SettingsPage() {
 
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("name")}</label>
+                        <label className="block text-sm font-medium  mb-1">{t("name")}</label>
                         {isEditing ? (
                             <input
                                 type="text"
@@ -364,7 +300,7 @@ export default function SettingsPage() {
                                 className="w-full p-2 border rounded-md"
                             />
                         ) : (
-                            <p className="p-2 bg-gray-50 rounded-md">{userData.userName}</p>
+                            <p className="p-2 dark:bg-gray-800 rounded-md">{userData.userName}</p>
                         )}
                       </div>
 
@@ -620,7 +556,7 @@ export default function SettingsPage() {
                             <p className="text-sm text-gray-500 dark:text-gray-400">{t("darkModeDescription")}</p>
                           </div>
                           <label className="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" checked={userData.displayColor === "Dark"} onChange={toggleDarkMode} className="sr-only peer" />
+                            <input type="checkbox" checked={userData.displayColor === "Dark"}  onChange={toggleDarkMode} className="sr-only peer" />
                             <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                           </label>
                         </div>

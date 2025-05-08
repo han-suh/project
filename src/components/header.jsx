@@ -34,7 +34,7 @@ export default function Header() {
 
 
    return (
-      <header className="bg-white shadow-sm">
+      <header className="shadow-sm">
          <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
                <Link to="/" className="flex items-center">
@@ -189,7 +189,7 @@ export default function Header() {
                   <div className="flex items-center space-x-4">
 
 
-                     <Link to="/cart" className="text-gray-700 hover:text-primary relative">
+                     <Link to="/cart" className="hover:text-primary relative">
 
                         {/* 장바구니 */}
                         <ShoppingCart className="w-5 h-5"/>
@@ -240,7 +240,7 @@ export default function Header() {
                            <div className="relative group">
 
                               {/*게시물 작성 메뉴 */}
-                              <button className="text-gray-700 hover:text-primary flex items-center">
+                              <button className="hover:text-primary flex items-center">
                                  게시물 작성
 
                                  {/* 아래방향 화살표임. 지워도 무방. */}
@@ -260,16 +260,16 @@ export default function Header() {
                               </div>
                            </div>
 
-                           <Link to="/mypage" className="text-gray-900 hover:text-primary">마이페이지( {loginUser.userId} ) </Link>
-                           <button onClick={logoutHandler} className="text-gray-700 hover:text-primary"> 로그아웃 </button>
+                           <Link to="/mypage" className="hover:text-primary">마이페이지( {loginUser.userId} ) </Link>
+                           <button onClick={logoutHandler} className="hover:text-primary"> 로그아웃 </button>
                            
                         </>)
 
                         : (
                         <>
                            {/* 조건문임. 로그인 하면 위가 보이고, 로그인 안하면 즉 useAuth로 user가 false면 아래 보임 */}
-                           <Link to="/login" className="text-gray-700 hover:text-primary"> 로그인 </Link>
-                           <Link to="/signup" className="text-gray-700 hover:text-primary"> 회원가입 </Link>
+                           <Link to="/login" className="hover:text-primary"> 로그인 </Link>
+                           <Link to="/signup" className="hover:text-primary"> 회원가입 </Link>
                         </>
 
                      )}

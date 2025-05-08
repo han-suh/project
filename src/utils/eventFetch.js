@@ -1,8 +1,126 @@
 // 리액트 컴포넌트는 대문자로 시작해야 리액트가 컴포넌트로 인식
 // 컴포넌트 말고 일반 유틸은 함수니까, 보통 자바스크립트 함수 네이밍 룰을 따른다.
 // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-const serverUrl = "http://localhost:4775";
+import {fetchAuth} from "./UserFetch.js";
 
+const serverUrl = "http://localhost:4775";
+//const serverUrl = "";
+export async function loadUserSettings(userId){
+   const url=`${serverUrl}/api/posting/${userId}/setting.do`;
+   const resp=await fetchAuth(url);
+   if(!resp.ok){throw new Error(resp.status+"")}
+
+   const data=await resp.json();
+   return data;
+}
+export async function loadSaveSettings(userData){
+   const resp=await fetchAuth(`/api/posting/${userData.userId}/setting.do`, {
+      method: "PUT",
+      headers : {"Content-Type": "application/json"},
+      body: JSON.stringify({
+         settingId: userData.settingId,
+         userId: userData.userId,
+         userEmail: userData.userEmail,
+         userName: userData.userName,
+         displayColor: userData.displayColor,
+         language: userData.language,
+         setAt: new Date().toISOString(),
+      }),
+   })
+   return resp;
+}
+export async function loadWidgetsByUserId(userId){
+   const url=`${serverUrl}/api/widgets/used?userId=${userId}`;
+   const resp=await fetch(url, {
+      credentials: "include"
+   })
+   if(!resp.ok){throw new Error(resp.status+"")}
+   const data=await resp.json();
+   return data;
+}
+export async function loadSaveWidgetsOrder(orderData){
+   const url=`${serverUrl}/api/widgets/order`;
+   const resp=await fetch(url, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      credentials: "include",
+      body: JSON.stringify(orderData)
+   })
+   return resp;
+}
+export async function loadRemoveWidget(widgetIdNum, userId){
+   const url=`${serverUrl}/api/widgets/delete/${widgetIdNum}?userId=${userId}`;
+   const resp=await fetch(url, {
+      method: "DELETE",
+      credentials: "include"
+   })
+   return resp;
+}
+export async function loadUser(userId){
+   const url=`${serverUrl}/api/posting/${userId}/userpage.do`;
+   const token=localStorage.getItem("jwt");
+   const resp=await fetch(url, {
+      method: "GET",
+      headers: {
+         'Authorization': `Bearer ${token}`,
+      },
+      credentials: "include"
+   })
+   if (!resp.ok) {
+      throw new Error(resp.status+"");
+   }
+   const data=await resp.json();
+   console.log(data);
+   return data;
+}
+export async function loadUserPosting(userId){
+   const url=`${serverUrl}/api/posting/${userId}/postpage.do`;
+   const token=localStorage.getItem("jwt");
+   const resp=await fetch(url, {
+      method: "GET",
+      headers: {
+         'Authorization': `Bearer ${token}`,
+      },
+      credentials: "include"
+   })
+   if (!resp.ok) {
+      throw new Error(resp.status+"");
+   }
+   const data=await resp.json();
+   console.log(data);
+   return data;
+}
+export async function loadSavePostingComment(postId, userId, contents){
+   const url=`${serverUrl}/api/posting/comments.do`;
+   const token=localStorage.getItem("jwt");
+   const resp=await fetch(url, {
+      method: "POST",
+      headers: {
+         "Content-Type": "application/json",
+         'Authorization': `Bearer ${token}`,
+      },
+      credentials: "include",
+      body: JSON.stringify({
+         postId : postId,
+         userId : userId, //currentUserId(로그인한 사용자의 Id는 useEffect로 받아올 것!)
+         contents : contents,
+      }),
+   });
+   return resp;
+}
+export async function loadPosting(postId){
+   const url=`${serverUrl}/api/posting/${postId}/read.do`;
+   const token=localStorage.getItem("jwt");
+   const resp=await fetch(url, {
+      method: "GET",
+      headers: {
+         'Authorization': `Bearer ${token}`,
+      },
+      credentials: "include"
+   });
+   const data=await resp.json();
+   return data;
+}
 
 export async function loadeventForMain(categoryId, pageSize) {
 

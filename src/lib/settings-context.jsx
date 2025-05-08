@@ -8,6 +8,8 @@ const SettingsContext = createContext(undefined);
 
 // 번역 데이터 가져오기
 import { getTranslation } from "./translations"
+import {loadUserSettings} from "../utils/eventFetch.js";
+import {useAuth} from "./auth-context.jsx";
 
 export function SettingsProvider({ children }) {
     const [darkMode, setDarkMode] = useState(false)
@@ -17,9 +19,29 @@ export function SettingsProvider({ children }) {
     const [marketingNotifications, setMarketingNotifications] = useState(false)
     const [autoTranslate, setAutoTranslate] = useState(true)
     const [fontSize, setFontSize] = useState("medium")
-
+    const [loginUser,]=useAuth();
+    const [userData, setUserData] = useState(null);
     // 로컬 스토리지에서 설정 불러오기
     useEffect(() => {
+        if(!loginUser) {return}
+        loadUserSettings(loginUser.userId)
+            .then((data) => {
+                console.log(data);
+                setUserData({
+                    settingId: data.settingId,
+                    userId: data.userId,
+                    userEmail: data.userEmail,
+                    userName: data.userName,
+                    // profileImageUrl: data.user.profileImageUrl,
+                    displayColor: data.displayColor,
+                    language: data.language,
+                    setAt: data.setAt,
+                })
+            })
+            .catch((err) => {
+                console.error("사용자 정보 불러오기 실패", err)
+            });
+
         if (typeof window !== "undefined") {
             const storedSettings = localStorage.getItem("userSettings")
             if (storedSettings) {
@@ -37,14 +59,15 @@ export function SettingsProvider({ children }) {
 
     // 다크 모드 설정 적용
     useEffect(() => {
+        if(!userData) return
         if (typeof window !== "undefined") {
-            if (darkMode) {
+            if (userData.displayColor==="Dark") {
                 document.documentElement.classList.add("dark")
             } else {
                 document.documentElement.classList.remove("dark")
             }
         }
-    }, [darkMode])
+    }, [userData?.displayColor])
 
     // 폰트 크기 설정 적용
     useEffect(() => {
@@ -189,6 +212,8 @@ export function SettingsProvider({ children }) {
                 fontSize,
                 setFontSize: changeFontSize,
                 t,
+                userData,
+                setUserData
             }}
         >
             {children}

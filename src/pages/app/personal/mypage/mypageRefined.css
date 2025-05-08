@@ -2,8 +2,8 @@
 
 /* 공통 */
 #mypage-body {
-    background-color: #f9f9f9;
-    color: #333;
+    /*background-color: #f9f9f9;*/
+    /*color: #333;*/
     line-height: 1.5;
     font-family: 'SUIT', 'Arial', sans-serif;
 }
@@ -57,7 +57,7 @@
 #profile-number-container .profile-number span {
     font-weight: bold;
     font-size: 18px;
-    color: #333;
+    /*color: #333;*/
 }
 
 #profile-number-container .profile-number a {
@@ -66,24 +66,25 @@
 
 /* 소개 섹션 */
 #main-container section {
-    background-color: #fff;
+    /*background-color: #fff;*/
 }
 #main-container section article {
     border-top: 1px solid #ccc;
-    color: #555;
+    /*color: #555;*/
 }
 /* 위젯 컨테이너 */
 #widget-container {
-    background-color: #fff;
+    color: #333333;
+    /*background-color: #fff;*/
 }
 /* 푸터 */
 #mypage-body footer {
-    border-top: 1px solid #ececec;
-    background-color: #fff;
+    /*border-top: 1px solid #ececec;*/
+    /*background-color: #fff;*/
 }
 
 #mypage-body footer p {
-    color: #666;
+    /*color: #666;*/
     font-size: 14px;
 }
 

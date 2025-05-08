@@ -121,7 +121,7 @@ export default function MainPage() {
    };
 
    return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
+      <div className="min-h-screen flex flex-col">
 
          {/* 카테고리 네비네이션 포함 그 아래부분임. 즉 헤더는 따로 분리되어있음. */}
          {/* Main navigation ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */}
@@ -141,7 +141,7 @@ export default function MainPage() {
                                  저장
                               </button>
                               <button onClick={toggleReorderMode}
-                                 className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200" >
+                                 className="flex items-center px-3 py-2 text-sm font-medium hover:bg-gray-100 rounded" >
                                  <X className="w-4 h-4 mr-1"/>
                                  취소
                               </button>

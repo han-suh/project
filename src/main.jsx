@@ -3,13 +3,14 @@ import {createRoot} from 'react-dom/client'
 import {AuthProvider} from "/src/lib/auth-context";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 
+// import 'bootstrap/dist/css/bootstrap.min.css'
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import './styles/index.css'
 import '/src/styles/globals.css'
 import "/src/styles/tailwind.min.css"
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import './lib/i18n';
-
 import App from './App.jsx'
 import {GoogleOAuthProvider} from "@react-oauth/google";
 
