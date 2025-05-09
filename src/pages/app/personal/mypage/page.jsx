@@ -16,7 +16,7 @@ const Mypage = () => {
     const [draggingWidget, setDraggingWidget] = useState(null);
     const [userName, setUserName] = useState("");
     const [userEmail, setUserEmail] = useState("");
-    const [followers, setFollowers] = useState("");
+    const [followers, setFollowers] = useState("");``
     const [following, setFollowing] = useState("");
     const [countPosts, setCountPosts] = useState("");
     const [selectedTab, setSelectedTab] = useState("widgets");
